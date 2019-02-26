@@ -1,0 +1,20 @@
+service: rust-ml-demo
+
+provider:
+  name: aws
+  runtime: rust
+  memoryize: 256
+
+plugins:
+  - serverless-rust
+
+package:
+  individually: true
+
+functions:
+  test:
+    handler: rust-ml-demo
+    events:
+      - http:
+          path: /test
+          method: GET
