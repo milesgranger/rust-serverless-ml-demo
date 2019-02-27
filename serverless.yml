@@ -12,9 +12,13 @@ package:
   individually: true
 
 functions:
-  test:
+  model:
     handler: rust-ml-demo
     events:
       - http:
-          path: /test
-          method: GET
+          path: /model/{name}
+          method: ANY
+          request:
+            parameters:
+              paths:
+                name: true
