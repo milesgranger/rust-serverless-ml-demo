@@ -45,7 +45,7 @@ fn train_or_predict(request: &Request) -> Result<Value, HandlerError> {
                 Some(target) => {
                     let y_array = array_from_nested_vec(target);
                     model.fit(x_array.view(), y_array.view());
-                    Ok(json!({"message": "Training round completed!"}))
+                    Ok(json!({"message": "Training round completed!", "model": model}))
                 },
                 None => {
                     let out = model.predict(x_array.view())
