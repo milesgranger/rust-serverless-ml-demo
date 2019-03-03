@@ -2,6 +2,7 @@ use lambda_http::{http::Method, lambda, IntoResponse, Request, RequestExt};
 use lambda_runtime::{error::HandlerError, Context};
 use ndarray::{Array1, Array2};
 use pyrus_nn::{
+    costs::CostFunc,
     activations::Activation,
     layers::{Dense, Layer},
     network::Sequential,
@@ -9,7 +10,7 @@ use pyrus_nn::{
 use serde_json::{json, Value};
 
 mod objects;
-use objects::Payload;
+use crate::objects::Payload;
 
 fn main() {
     lambda!(handler);
@@ -70,28 +71,29 @@ fn get_model(_request: &Request) -> Result<Value, HandlerError> {
     Ok(json!({"message": "New model, just for you!", "model": build_base_model()}))
 }
 
+// The base/default model; TODO: Support parametrization
 fn build_base_model() -> Sequential {
     let mut nn = Sequential::new();
-    nn.add(Dense::new(3, 6, Activation::Tanh)).unwrap();
+    nn.add(Dense::new(4, 6, Activation::Tanh)).unwrap();
+    nn.add(Dense::new(6, 6, Activation::Tanh)).unwrap();
     nn.add(Dense::new(6, 3, Activation::Softmax)).unwrap();
     nn.n_epoch = 1;
+    nn.cost = CostFunc::CrossEntropy;
     nn
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    use lambda_http::http::StatusCode;
 
     #[test]
     fn handler_handles() {
         let request = Request::default();
-        let expected = json!({
-        "message": "Go Serverless v1.0! Your function executed successfully!"
-        })
-        .into_response();
+
         let response = handler(request, Context::default())
             .expect("expected Ok(_) value")
             .into_response();
-        assert_eq!(response.body(), expected.body())
+        assert_eq!(response.status(), StatusCode::OK)
     }
 }
