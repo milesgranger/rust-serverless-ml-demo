@@ -17,7 +17,7 @@ fn main() {
 }
 
 fn handler(request: Request, _: Context) -> Result<impl IntoResponse, HandlerError> {
-    // POST we're training, GET we're predicting
+
     match request.method() {
         &Method::GET => get_model(&request),
         &Method::POST => train_or_predict(&request),

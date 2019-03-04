@@ -24,7 +24,7 @@ def get_train_test_split():
     Load xTrain, xTest, yTrain, yTest
     """
     X, y = load_iris(True)
-    y = OneHotEncoder().fit_transform(y.reshape(-1, 1)).toarray()  # One hot encode targets
+    y = OneHotEncoder(3).fit_transform(y.reshape(-1, 1)).toarray()  # One hot encode targets
     return train_test_split(X, y, test_size=0.05)
 
 
